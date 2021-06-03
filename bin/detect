@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# bin/detect <build-dir>
+
+if [ -z "${RETYPE_CONFIG}" ]; then
+ config_path="$(find "${1}" -type f -iname retype.json | head -n1)"
+ if [ ! -z "${config_path}" ]; then
+  echo "Retype (config file at ${config_path})"
+  exit 0
+ fi
+elif [ -e "${1}/${RETYPE_CONFIG}" ]; then
+ if [ -d "${1}/${RETYPE_CONFIG}" ]; then
+  if [ ! -z "$(find "${1}/${RETYPE_CONFIG}" -maxdepth 1 -iname retype.json)" ]; then
+   echo "Retype (default config within '${RETYPE_CONFIG}' directory)"
+   exit 0
+  fi
+ elif [ -f "${1}/${RETYPE_CONFIG}" ]; then
+  echo "Retype (config at '${RETYPE_CONFIG}')"
+  exit 0
+ fi
+fi
+
+echo "no"
+exit 1

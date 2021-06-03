@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# bin/release <build-dir>
+
+# FIXME: Use something like .profile.d to set LD_LIBRARY_PATH.
+cat << EOF
+default_process_types:
+  web: exec 3>&1 && LD_LIBRARY_PATH=${HOME}/usr/lib ${HOME}/usr/sbin/lighttpd -D -f lighttpd.conf -m "${HOME}/usr/lib"
+EOF
