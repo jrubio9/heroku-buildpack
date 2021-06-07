@@ -215,6 +215,7 @@ mimetype.assign = (
   ".log" => "text/plain",
   ".pdf" => "application/pdf",
   ".png" => "image/png",
+  ".svg" => "image/svg+xml",
   ".tar" => "application/x-tar",
   ".tar.gz" => "application/x-tgz",
   ".tar.bz2" => "application/x-bzip-compressed-tar",
