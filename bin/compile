@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir> <env-dir>
 
-dotnet_version="${DOTNET_VERSION-5.0.200}"
-retype_version="${RETYPE_VERSION-1.5.0}"
-retype_config_path="${RETYPE_CONFIG}"
-retype_license_key="${RETYPE_LICENSE_KEY}"
-
+dotnet_version="5.0.200"
+retype_version="1.5.0"
 build_dir="${1}"
 cache_dir="${2}"
 env_dir="${3}"
@@ -19,6 +16,23 @@ source "${bp_dir}/include/functions.inc.sh" || {
  >&2 echo " ! ## Error: Unable to include buildpack common functions include for main script."
  exit 1
 }
+
+if [ -f "${env_dir}/DOTNET_VERSION" ]; then
+ dotnet_version="$(cat "${env_dir}/DOTNET_VERSION")" || \
+  fail_cmd "Unable to fetch contents of environment variable DOTNET_VERSION from file." \
+   "cat \"${env_dir}/DOTNET_VERSION\"" \
+   "${dotnet_version}"
+ notice "Custom 'dotnet' CLI version (DOTNET_VERSION): ${dotnet_version}"
+fi
+
+if [ -f "${env_dir}/RETYPE_VERSION" ]; then
+ retype_version="$(cat "${env_dir}/RETYPE_VERSION")" || \
+  fail_cmd "Unable to fetch contents of environment variable RETYPE_VERSION from file." \
+   "cat \"${env_dir}/RETYPE_VERSION\"" \
+   "${retype_version}"
+
+ notice "Custom Retype version (RETYPE_VERSION): ${retype_version}"
+fi
 
 section "Moving repository out of build directory"
 tmpdir="$(mktemp --directory 2>&1)" || \
@@ -100,7 +114,23 @@ fi
 notice "Switching to repo temp dir: ${full_tmpdir}"
 cd "${full_tmpdir}" || fail "Unable to change to build directory: ${full_tmpdir}"
 
-if [ -z "${retype_config_path}" ]; then
+if [ -f "${env_dir}/RETYPE_CONFIG" ]; then
+ notice "The 'retype.json' file is specified via RETYPE_CONFIG env var"
+ retype_config_path="$(cat "${env_dir}/RETYPE_CONFIG")"
+ if [ ! -e "${retype_config_path}" ]; then
+  fail "Specified path to retype.json not found in repository: ${retype_config_path}"
+ elif [ -d "${retype_config_path}" ]; then
+  notice "RETYPE_CONFIG path points to a directory containing 'retype.json'."
+  if [ ! -f "${retype_config_path}/retype.json" ]; then
+   fail "Unable to find 'retype.json' within specified RETYPE_CONFIG: ${retype_config_path}"
+  fi
+ else
+  notice "RETYPE_CONFIG path points to file: ${retype_config_path}"
+ fi
+
+ # do not export RETYPE_CONFIG to run environment
+ rm "${env_dir}/RETYPE_CONFIG" > /dev/null 2>&1
+else
  if [ -e "retype.json" ]; then
   notice "Found 'retype.json' at repository root."
  else
@@ -111,18 +141,6 @@ if [ -z "${retype_config_path}" ]; then
   else
    notice "Found 'retype.json' at: ${retype_config_path}"
   fi
- fi
-else
- notice "The 'retype.json' file is specified via RETYPE_CONFIG env var"
- if [ ! -e "${retype_config_path}" ]; then
-  fail "Specified path to retype.json not found in repository: ${retype_config_path}"
- elif [ -d "${retype_config_path}" ]; then
-  notice "RETYPE_CONFIG path points to a directory containing 'retype.json'."
-  if [ ! -f "${retype_config_path}/retype.json" ]; then
-   fail "Unable to find 'retype.json' within specified RETYPE_CONFIG: ${retype_config_path}"
-  fi
- else
-  notice "RETYPE_CONFIG path points to file: ${retype_config_path}"
  fi
 fi
 
@@ -135,10 +153,12 @@ fi
 overridestr="$(append_json "" "output" "${build_dir}/wwwroot")" || \
  fail "Unable to append output path setting while building the 'retype build' argument list."
 
-if [ ! -z "${retype_license_key}" ]; then
- notice "License key added."
- overridestr="$(append_json "${overridestr}" "license" "${retype_license_key}")" || \
+if [ -f "${env_dir}/RETYPE_LICENSE_KEY" ]; then
+ notice "Adding Retype license key."
+ overridestr="$(append_json "${overridestr}" "license" "$(cat "${env_dir}/RETYPE_LICENSE_KEY")")" || \
   fail "Unable to append 'license' setting while building the 'retype build' argument list."
+ # do not export RETYPE_LICENSE_KEY to run environment
+ rm "${env_dir}/RETYPE_LICENSE_KEY" > /dev/null 2>&1
 fi
 
 overridestr="{
