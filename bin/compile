@@ -154,6 +154,8 @@ if [ ! -d "${build_dir}/wwwroot" -o ! -e "${build_dir}/wwwroot/index.html" ]; th
  fail "Retype built files cannot be found in target directory: ${build_dir}/wwwroot"
 fi
 
+echo "${retypeout}" | indent
+
 notice "Documentation built successfully!"
 
 notice "Switching back to original working directory: ${oldwd}"
