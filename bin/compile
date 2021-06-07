@@ -136,6 +136,7 @@ overridestr="$(append_json "" "output" "${build_dir}/wwwroot")" || \
  fail "Unable to append output path setting while building the 'retype build' argument list."
 
 if [ ! -z "${retype_license_key}" ]; then
+ notice "License key added."
  overridestr="$(append_json "${overridestr}" "license" "${retype_license_key}")" || \
   fail "Unable to append 'license' setting while building the 'retype build' argument list."
 fi
