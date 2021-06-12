@@ -224,32 +224,10 @@ server.port = env.PORT
 index-file.names = ( "index.html" )
 server.modules += ("mod_accesslog")
 accesslog.filename = "/dev/fd/3"
-mimetype.assign = (
-  ".bz2" => "application/x-bzip",
-  ".css" => "text/css",
-  ".html" => "text/html",
-  ".htm" => "text/html",
-  ".cfg" => "text/plain",
-  ".conf" => "text/plain",
-  ".gz" => "application/x-gzip",
-  ".jpg" => "image/jpeg",
-  ".js" => "text/javascript",
-  ".json" => "application/json",
-  ".log" => "text/plain",
-  ".pdf" => "application/pdf",
-  ".png" => "image/png",
-  ".svg" => "image/svg+xml",
-  ".tar" => "application/x-tar",
-  ".tar.gz" => "application/x-tgz",
-  ".tar.bz2" => "application/x-bzip-compressed-tar",
-  ".tbz" => "application/x-bzip-compressed-tar",
-  ".tgz" => "application/x-tgz",
-  ".txt" => "text/plain",
-  ".xml" => "text/xml",
-  ".zip" => "application/zip",
-  "" => "application/octet-stream"
-)
+include env.HOME + "/lighttpd-mime-types.conf"
 EOC
+ result="$(cp include/lighttpd-mime-types.conf "${build_dir}/." 2>&1)" || \
+  fail_cmd "Error copying lighttpd mime types include" "cp include/lighttpd-mime-types.conf \"${build_dir}/.\"" "${result}"
  notice "Default lighttpd config file saved."
 fi
 
