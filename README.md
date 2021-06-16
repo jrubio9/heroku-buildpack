@@ -25,7 +25,7 @@ heroku create my-app-name
 **Note:** Replace `my-app-name` with the app name you want to allocate in Heroku
 4. Set up the app to use retype buildpack
 ```
-heroku buildpacks:set 'https://github.com/fabriciomurta/retype-buildpack'
+heroku buildpacks:set 'https://github.com/retypeapp/heroku-buildpack'
 ```
 
 5. Push the repo to Heroku
