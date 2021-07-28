@@ -120,7 +120,9 @@ if [ -f "${env_dir}/RETYPE_CONFIG" ]; then
  if [ ! -e "${retype_config_path}" ]; then
   fail "Specified path to Retype configuration file not found in repository: ${retype_config_path}"
  elif [ -d "${retype_config_path}" ]; then
-  if [ ! -f "${retype_config_path}/retype.yml" -a ! -f "${retype_config_path}/retype.json" ]; then
+  if [ ! -f "${retype_config_path}/retype.yml" -a \
+       ! -f "${retype_config_path}/retype.yaml" -a \
+       ! -f "${retype_config_path}/retype.json" ]; then
    fail "Unable to find Retype configuration file within specified RETYPE_CONFIG: ${retype_config_path}"
   fi
   notice "RETYPE_CONFIG path points to a directory containing a Retype configuration file."
@@ -133,10 +135,12 @@ if [ -f "${env_dir}/RETYPE_CONFIG" ]; then
 else
  if [ -e "retype.yml" ]; then
   notice "Found 'retype.yml' at repository root."
+ elif [ -e "retype.yaml" ]; then
+  notice "Found 'retype.yaml' at repository root."
  elif [ -e "retype.json" ]; then
   notice "Found 'retype.json' at repository root."
  else
-  retype_config_path="$(find ./ -iname "retype.json" -o -iname "retype.yml" | head -n1)"
+  retype_config_path="$(find ./ -iname "retype.json" -o -iname "retype.yml" -o -iname "retype.yaml" | head -n1)"
 
   if [ -z "${retype_config_path}" ]; then
    fail "Unable to locate any usable Retype configuration file in repository."

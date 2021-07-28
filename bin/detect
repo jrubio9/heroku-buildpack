@@ -9,7 +9,7 @@ if [ -z "${RETYPE_CONFIG}" ]; then
  fi
 elif [ -e "${1}/${RETYPE_CONFIG}" ]; then
  if [ -d "${1}/${RETYPE_CONFIG}" ]; then
-  if [ ! -z "$(find "${1}/${RETYPE_CONFIG}" -maxdepth 1 -iname retype.json -o -iname retype.yml)" ]; then
+  if [ ! -z "$(find "${1}/${RETYPE_CONFIG}" -maxdepth 1 -iname retype.json -o -iname retype.yml -o -iname retype.yaml )" ]; then
    echo "Retype (default config within '${RETYPE_CONFIG}' directory)"
    exit 0
   fi
