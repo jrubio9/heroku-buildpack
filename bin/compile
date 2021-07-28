@@ -115,15 +115,15 @@ notice "Switching to repo temp dir: ${full_tmpdir}"
 cd "${full_tmpdir}" || fail "Unable to change to build directory: ${full_tmpdir}"
 
 if [ -f "${env_dir}/RETYPE_CONFIG" ]; then
- notice "The 'retype.json' file is specified via RETYPE_CONFIG env var"
+ notice "Retype configuration file specified via RETYPE_CONFIG env var"
  retype_config_path="$(cat "${env_dir}/RETYPE_CONFIG")"
  if [ ! -e "${retype_config_path}" ]; then
-  fail "Specified path to retype.json not found in repository: ${retype_config_path}"
+  fail "Specified path to Retype configuration file not found in repository: ${retype_config_path}"
  elif [ -d "${retype_config_path}" ]; then
-  notice "RETYPE_CONFIG path points to a directory containing 'retype.json'."
-  if [ ! -f "${retype_config_path}/retype.json" ]; then
-   fail "Unable to find 'retype.json' within specified RETYPE_CONFIG: ${retype_config_path}"
+  if [ ! -f "${retype_config_path}/retype.yml" -a ! -f "${retype_config_path}/retype.json" ]; then
+   fail "Unable to find Retype configuration file within specified RETYPE_CONFIG: ${retype_config_path}"
   fi
+  notice "RETYPE_CONFIG path points to a directory containing a Retype configuration file."
  else
   notice "RETYPE_CONFIG path points to file: ${retype_config_path}"
  fi
@@ -131,15 +131,17 @@ if [ -f "${env_dir}/RETYPE_CONFIG" ]; then
  # do not export RETYPE_CONFIG to run environment
  rm "${env_dir}/RETYPE_CONFIG" > /dev/null 2>&1
 else
- if [ -e "retype.json" ]; then
+ if [ -e "retype.yml" ]; then
+  notice "Found 'retype.yml' at repository root."
+ elif [ -e "retype.json" ]; then
   notice "Found 'retype.json' at repository root."
  else
-  retype_config_path="$(find ./ -iname "retype.json" | head -n1)"
+  retype_config_path="$(find ./ -iname "retype.json" -o -iname "retype.yml" | head -n1)"
 
   if [ -z "${retype_config_path}" ]; then
-   fail "Unable to locate any usable 'retype.json' file in repository."
+   fail "Unable to locate any usable Retype configuration file in repository."
   else
-   notice "Found 'retype.json' at: ${retype_config_path}"
+   notice "Found Retype configuration in: ${retype_config_path}"
   fi
  fi
 fi
