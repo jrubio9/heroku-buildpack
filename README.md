@@ -1,10 +1,10 @@
 # Retype docs buildpack for Heroku
 
-This is a buildpack intended to build documentation out of a repository containing retype-aware documentation.
+This is a buildpack intended to build documentation out of a repository containing a [Retype](https://retype.com) project.
 
 ## Quick start guide
 
-The guide will show how to duplicate the Retype Website in your custom app using the commandline and [the Heroku CLI](https://devcenter.heroku.com/articles/heroku-command-line)
+The guide will show how to deploy the Retype Website in your custom app using the commandline and [the Heroku CLI](https://devcenter.heroku.com/articles/heroku-command-line)
 
 1. Clone the repository
 ```
@@ -36,7 +36,7 @@ git push heroku main
 
 **Pro Tip:** If Heroku asks for password during the `git` command, use username `blank` and for the password, the key heroku informs via `heroku auth:token`.
 
-When this step is done, you will then be able to access the fresh retype website hosted in Heroku via https://_<my-app-name>_.herokuapp.com
+When this step is done, you will then be able to access the fresh Retype website hosted in Heroku via https://_<my-app-name>_.herokuapp.com
 
 **Note:** Remember to replace `my-app-name` with your unique app name in Heroku. If the name is already taken, you'd need to use a different one.
 
@@ -50,14 +50,14 @@ Specifies the [.NET version](https://dotnet.microsoft.com/) to use during build.
 
 ### `RETYPE_CONFIG`
 
-Specifies the path to **retype.json**. By default the build pack will look for a `retype.json` file in the repository's root, then search everywhere within the repo for the file. If this option is present, it will skip searching and will use the provided path.
+Specifies the path to Retype's configuration file. By default the build pack will look for `retype.yml`, `retype.yaml`, and `retype.json` in the repository's root, then search everywhere within the repo for the file. If this option is present, no search will be attempted even if the path is invalid.
 
-- If the path points to a directory, it will check whether there's a **retype.json** within.
-- If the path points to a file, it will tell the Retype CLI that file is to be used as **retype.json**, so you can use a different retype config file for the app than the one used locally.
+- If the path points to a directory, it will check whether there's a Retype config file therein.
+- If the path points to a file, it will tell the Retype CLI that file is to be used as the configuration file, so it is possible to use a different retype config file for the Heroku environment than the one used elsewhere.
 
 ### `RETYPE_VERSION`
 
-Specifies the Retype version to use, if it is not wanted to use the latest one.
+Specifies the Retype version to use. Without this, the buildpack should use the Retype version specified in the Buildpack files. Usually the default branch of the buildpack will have the latest version, updated every Retype release.
 
 ## Troubleshooting
 
@@ -103,4 +103,4 @@ Heroku offers a range of configuration options and integrations besides the appr
 - Trigger rebuild of dependencies if the cached ones don't match the desired version (zlib, lpcre, lighttpd, retype, dotnet)
 - Set up mime-db for arbitrary file mime types
 
-1. [Set up Retype in the repo by adding a retype.json file](https://retype.com/configuration/project/)
+1. [Set up Retype in the repo by adding a configuration file](https://retype.com/configuration/project/)
