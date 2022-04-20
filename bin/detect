@@ -2,14 +2,36 @@
 # bin/detect <build-dir>
 
 if [ -z "${RETYPE_CONFIG}" ]; then
- config_path="$(find "${1}" -type f -iname retype.json -o -iname retype.yml | head -n1)"
+ build_dir="${1}"
+
+ # wipe trailing slashes from the build dir (would break 'find' path filter)
+ while [ "${build_dir: -1}" == "/" ]; do
+  build_dir="${build_dir::-1}"
+ done
+
+ # Look for the config file in increasing depths until 3 (then do full-depth search)
+ depth=1
+ while [ ${depth} -le 3 ]; do
+  deptharg=()
+  if [ ${depth} -lt 3 ]; then
+   deptharg=(-maxdepth ${depth})
+  fi
+
+  config_path="$(find "${build_dir}" "${deptharg[@]}" -type f \( -iname retype.yml -o -iname retype.yaml -o -iname retype.json \) -not -path "${build_dir}/.github/workflows/*" | head -n1)"
+
+  if [ ! -z "${config_path}" ]; then
+   break
+  fi
+  depth="$(( 10#${depth} + 1 ))"
+ done
+
  if [ ! -z "${config_path}" ]; then
   echo "Retype (config file at ${config_path})"
   exit 0
  fi
 elif [ -e "${1}/${RETYPE_CONFIG}" ]; then
  if [ -d "${1}/${RETYPE_CONFIG}" ]; then
-  if [ ! -z "$(find "${1}/${RETYPE_CONFIG}" -maxdepth 1 -iname retype.json -o -iname retype.yml -o -iname retype.yaml )" ]; then
+  if [ ! -z "$(find "${1}/${RETYPE_CONFIG}" -maxdepth 1 -iname retype.yml -o -iname retype.yaml -o -iname retype.json)" ]; then
    echo "Retype (default config within '${RETYPE_CONFIG}' directory)"
    exit 0
   fi
