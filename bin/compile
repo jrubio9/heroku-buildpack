@@ -3,6 +3,9 @@
 
 dotnet_version="6.0.202"
 retype_version="2.2.0"
+libpcre_version="10.40"
+zlib_version="1.2.12"
+lighty_version="1.4.64"
 build_dir="${1}"
 cache_dir="${2}"
 env_dir="${3}"
@@ -210,16 +213,16 @@ else
 
  notice "Setting up libpcre"
  gbs_compile \
-  --url="https://ftp.pcre.org/pub/pcre/pcre-8.44.tar.bz2" \
+  --url="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${libpcre_version}/pcre2-${libpcre_version}.tar.bz2" \
   --eopt="--disable-cpp"
 
  notice "Setting up zlib"
  gbs_compile \
-  --url="https://zlib.net/zlib-1.2.11.tar.gz"
+  --url="https://zlib.net/zlib-${zlib_version}.tar.xz"
 
  notice "Setting up lighttpd"
  gbs_compile \
-  --url="https://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.59.tar.xz" \
+  --url="https://download.lighttpd.net/lighttpd/releases-${lighty_version%.*}.x/lighttpd-${lighty_version}.tar.xz" \
   --cflags="-I${usr_root}/include" \
   --ldflags="-L${usr_root}/lib"
 
