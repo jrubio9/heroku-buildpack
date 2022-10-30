@@ -4,7 +4,7 @@
 dotnet_version="6.0.202"
 retype_version="2.2.0"
 libpcre_version="10.40"
-zlib_version="1.2.12"
+zlib_version="1.2.13"
 lighty_version="1.4.64"
 build_dir="${1}"
 cache_dir="${2}"
